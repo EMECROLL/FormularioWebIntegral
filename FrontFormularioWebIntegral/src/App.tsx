@@ -1,35 +1,178 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface FormData {
+  NombreCompleto: string;
+  Correo: string;
+  Telefono: string;
+  Mensaje: string;
 }
 
-export default App
+interface FormErrors {
+  NombreCompleto?: string;
+  Correo?: string;
+  Telefono?: string;
+  Mensaje?: string;
+}
+
+function App() {
+  const [formData, setFormData] = useState<FormData>({
+    NombreCompleto: '',
+    Correo: '',
+    Telefono: '',
+    Mensaje: ''
+  });
+
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [status, setStatus] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.NombreCompleto.trim()) newErrors.NombreCompleto = 'Nombre requerido';
+    if (!formData.Correo.trim()) newErrors.Correo = 'Correo requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Correo))
+      newErrors.Correo = 'Correo inválido';
+
+    if (!formData.Telefono.trim()) newErrors.Telefono = 'Teléfono requerido';
+    else if (!/^\d{10}$/.test(formData.Telefono))
+      newErrors.Telefono = 'Teléfono debe tener 10 dígitos';
+
+    if (!formData.mensaje.trim()) newErrors.Mensaje = 'Mensaje requerido';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsSubmitting(true);
+    setStatus('Enviando...');
+
+    try {
+      
+      const apiUrl = 'http://localhost:3000/api/usuarios';
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Respuesta del servidor:', data);
+
+      setStatus('Mensaje enviado con éxito');
+      setFormData({ NombreCompleto: '', Correo: '', Telefono: '', Mensaje: '' });
+      setErrors({});
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+      setStatus('Error al enviar el mensaje. Por favor intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="app-container">
+      <div className="centered-form">
+        <div className="form-card">
+          <div className="form-header">
+            <h1>Contáctanos</h1>
+            <p>Llena el formulario y nos pondremos en contacto contigo</p>
+          </div>
+
+          <form onSubmit={handleSubmit} noValidate>
+            <div className={`form-group ${errors.NombreCompleto ? 'error' : ''}`}>
+              <label htmlFor="nombreCompleto">Nombre completo</label>
+              <input
+                id="nombreCompleto"
+                type="text"
+                name="nombreCompleto"
+                value={formData.NombreCompleto}
+                onChange={handleChange}
+                placeholder="Ingresa tu nombre completo"
+              />
+              {errors.NombreCompleto && <span className="error-message">{errors.NombreCompleto}</span>}
+            </div>
+
+            <div className={`form-group ${errors.Correo ? 'error' : ''}`}>
+              <label htmlFor="correo">Correo electrónico</label>
+              <input
+                id="correo"
+                type="email"
+                name="correo"
+                value={formData.Correo}
+                onChange={handleChange}
+                placeholder="tucorreo@ejemplo.com"
+              />
+              {errors.Correo && <span className="error-message">{errors.Correo}</span>}
+            </div>
+
+            <div className={`form-group ${errors.Telefono ? 'error' : ''}`}>
+              <label htmlFor="telefono">Teléfono</label>
+              <input
+                id="telefono"
+                type="tel"
+                name="telefono"
+                value={formData.Telefono}
+                onChange={handleChange}
+                placeholder="10 dígitos sin espacios"
+              />
+              {errors.Telefono && <span className="error-message">{errors.Telefono}</span>}
+            </div>
+
+            <div className={`form-group ${errors.Mensaje ? 'error' : ''}`}>
+              <label htmlFor="mensaje">Mensaje</label>
+              <textarea
+                id="mensaje"
+                name="mensaje"
+                rows={4}
+                value={formData.Mensaje}
+                onChange={handleChange}
+                placeholder="¿En qué podemos ayudarte?"
+              />
+              {errors.Mensaje && <span className="error-message">{errors.Mensaje}</span>}
+            </div>
+
+            <button 
+              type="submit" 
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="spinner"></span>
+                  Enviando...
+                </>
+              ) : 'Enviar mensaje'}
+            </button>
+            
+            {status && (
+              <div className={`status-message ${status.includes('éxito') ? 'success' : 'error'}`}>
+                {status}
+              </div>
+            )}
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
