@@ -39,7 +39,7 @@ function App() {
     else if (!/^\d{10}$/.test(formData.Telefono))
       newErrors.Telefono = 'Teléfono debe tener 10 dígitos';
 
-    if (!formData.mensaje.trim()) newErrors.Mensaje = 'Mensaje requerido';
+    if (!formData.Mensaje.trim()) newErrors.Mensaje = 'Mensaje requerido';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -101,9 +101,9 @@ function App() {
             <div className={`form-group ${errors.NombreCompleto ? 'error' : ''}`}>
               <label htmlFor="nombreCompleto">Nombre completo</label>
               <input
-                id="nombreCompleto"
+                id="NombreCompleto"
                 type="text"
-                name="nombreCompleto"
+                name="NombreCompleto"
                 value={formData.NombreCompleto}
                 onChange={handleChange}
                 placeholder="Ingresa tu nombre completo"
@@ -114,9 +114,9 @@ function App() {
             <div className={`form-group ${errors.Correo ? 'error' : ''}`}>
               <label htmlFor="correo">Correo electrónico</label>
               <input
-                id="correo"
+                id="Correo"
                 type="email"
-                name="correo"
+                name="Correo"
                 value={formData.Correo}
                 onChange={handleChange}
                 placeholder="tucorreo@ejemplo.com"
@@ -127,9 +127,9 @@ function App() {
             <div className={`form-group ${errors.Telefono ? 'error' : ''}`}>
               <label htmlFor="telefono">Teléfono</label>
               <input
-                id="telefono"
+                id="Telefono"
                 type="tel"
-                name="telefono"
+                name="Telefono"
                 value={formData.Telefono}
                 onChange={handleChange}
                 placeholder="10 dígitos sin espacios"
@@ -140,8 +140,8 @@ function App() {
             <div className={`form-group ${errors.Mensaje ? 'error' : ''}`}>
               <label htmlFor="mensaje">Mensaje</label>
               <textarea
-                id="mensaje"
-                name="mensaje"
+                id="Mensaje"
+                name="Mensaje"
                 rows={4}
                 value={formData.Mensaje}
                 onChange={handleChange}
