@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { Link } from 'react-router-dom';  // Asegúrate de tenerlo importado
 import './App.css';
 
 interface FormData {
@@ -8,6 +9,7 @@ interface FormData {
   Telefono: string;
   Mensaje: string;
   recaptcha: string;
+  aceptaPrivacidad: boolean;
 }
 
 interface FormErrors {
@@ -16,6 +18,7 @@ interface FormErrors {
   Telefono?: string;
   Mensaje?: string;
   recaptcha?: string;
+  aceptaPrivacidad?: string;
 }
 
 function App() {
@@ -25,6 +28,7 @@ function App() {
     Telefono: '',
     Mensaje: '',
     recaptcha: '',
+    aceptaPrivacidad: false,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -45,6 +49,7 @@ function App() {
 
     if (!formData.Mensaje.trim()) newErrors.Mensaje = 'Mensaje requerido';
     if (!formData.recaptcha) newErrors.recaptcha = 'Por favor verifica que no eres un robot.';
+    if (!formData.aceptaPrivacidad) newErrors.aceptaPrivacidad = 'Debes aceptar el aviso de privacidad para continuar.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -56,15 +61,16 @@ function App() {
     setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.target;
+    setFormData(prev => ({ ...prev, aceptaPrivacidad: checked }));
+    setErrors(prev => ({ ...prev, aceptaPrivacidad: '' }));
+  };
+
   const handleRecaptchaChange = (token: string | null) => {
     setFormData(prev => ({ ...prev, recaptcha: token || '' }));
     setErrors(prev => ({ ...prev, recaptcha: '' }));
-    
   };
-
-
-
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +78,7 @@ function App() {
 
     setIsSubmitting(true);
     setStatus('Enviando...');
-    
+
     try {
       const apiUrl = import.meta.env.VITE_URLAPI;
 
@@ -84,8 +90,6 @@ function App() {
         body: JSON.stringify(formData),
       });
 
-      
-
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -94,7 +98,7 @@ function App() {
       console.log('Respuesta del servidor:', data);
 
       setStatus('Mensaje enviado con éxito');
-      setFormData({ NombreCompleto: '', Correo: '', Telefono: '', Mensaje: '', recaptcha: '' });
+      setFormData({ NombreCompleto: '', Correo: '', Telefono: '', Mensaje: '', recaptcha: '', aceptaPrivacidad: false });
       setErrors({});
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
@@ -168,15 +172,48 @@ function App() {
 
             <div className={`form-group ${errors.recaptcha ? 'error' : ''}`}>
               {import.meta.env.VITE_RECAPTCHA_KEY ? (
-                <ReCAPTCHA
-                  sitekey={import.meta.env.VITE_RECAPTCHA_KEY}
-                  onChange={handleRecaptchaChange}
-                />
+                <>
+                  <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_KEY}
+                    onChange={handleRecaptchaChange}
+                  />
+                  {errors.recaptcha && <span className="error-message">{errors.recaptcha}</span>}
+
+                  <div style={{ marginTop: '10px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', fontSize: '0.85em', gap: '8px' }}>
+                      <input
+                        type="checkbox"
+                        name="aceptaPrivacidad"
+                        checked={formData.aceptaPrivacidad}
+                        onChange={handleCheckboxChange}
+                        style={{ margin: 0 }} // elimina espacio extra
+                      />
+                      <span>
+                        Acepto el{' '}
+                        <Link to="/home" style={{ color: '#007bff', textDecoration: 'underline' }}>
+                          Aviso de Privacidad
+                        </Link>{' '}
+                        y{' '}
+                        <Link to="/Terminos" style={{ color: '#007bff', textDecoration: 'underline' }}>
+                          Términos y Condiciones
+                        </Link>
+                      </span>
+                    </label>
+
+                    {errors.aceptaPrivacidad && (
+                      <div className="error-message" style={{ marginTop: '4px' }}>
+                        {errors.aceptaPrivacidad}
+                      </div>
+                    )}
+                  </div>
+
+
+                </>
               ) : (
                 <span className="error-message">No se pudo cargar reCAPTCHA</span>
               )}
-              {errors.recaptcha && <span className="error-message">{errors.recaptcha}</span>}
             </div>
+
 
             <button
               type="submit"
