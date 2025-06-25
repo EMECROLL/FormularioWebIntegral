@@ -179,33 +179,44 @@ function App() {
                   />
                   {errors.recaptcha && <span className="error-message">{errors.recaptcha}</span>}
 
-                  <div style={{ marginTop: '10px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', fontSize: '0.85em', gap: '8px' }}>
+                  <div style={{ display: 'flex' }}>
+                    <div style={{marginTop: 10, marginRight: 8}}>
+ 
                       <input
                         type="checkbox"
                         name="aceptaPrivacidad"
                         checked={formData.aceptaPrivacidad}
                         onChange={handleCheckboxChange}
-                        style={{ margin: 0 }} // elimina espacio extra
                       />
-                      <span>
-                        Acepto el{' '}
-                        <Link to="/home" style={{ color: '#007bff', textDecoration: 'underline' }}>
-                          Aviso de Privacidad
-                        </Link>{' '}
-                        y{' '}
-                        <Link to="/Terminos" style={{ color: '#007bff', textDecoration: 'underline' }}>
-                          Términos y Condiciones
-                        </Link>
-                      </span>
-                    </label>
+                    </div>
 
-                    {errors.aceptaPrivacidad && (
-                      <div className="error-message" style={{ marginTop: '4px' }}>
-                        {errors.aceptaPrivacidad}
-                      </div>
-                    )}
+                    <div style={{ marginTop: '10px' }}>
+                      <label>
+
+                        <span>
+                          Acepto el{' '}
+                          <Link to="/home" style={{ color: '#007bff', textDecoration: 'underline' }}>
+                            Aviso de Privacidad
+                          </Link>{' '}
+                          y{' '}
+                          <Link to="/Terminos" style={{ color: '#007bff', textDecoration: 'underline' }}>
+                            Términos y Condiciones
+                          </Link>
+                        </span>
+                      </label>
+
+                      {errors.aceptaPrivacidad && (
+                        <div className="error-message" style={{ marginTop: '4px' }}>
+                          {errors.aceptaPrivacidad}
+                        </div>
+                      )}
+                    </div>
+
                   </div>
+
+
+
+
 
 
                 </>
