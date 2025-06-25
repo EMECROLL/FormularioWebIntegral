@@ -13,7 +13,7 @@ const crearUsuario = async (usuarioData) => {
   if (error) {
     throw new Error("Datos inválidos: " + error.details[0].message);
   } else {
-    await validarRecaptcha(usuarioData.tokenRecaptcha)
+    await validarRecaptcha(usuarioData.recaptcha)
       .then((resultado) => {
         if (!resultado.success) {
           throw new Error(

@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-const verifyRecaptcha = async (token) => {
+const validarRecaptcha = async (token) => {
   const secretKey = process.env.CLAVE_SECRETA_RECAPTCHA;
 
   if (!token) {
@@ -18,6 +18,7 @@ const verifyRecaptcha = async (token) => {
     );
 
     const data = await response.json();
+    console.log("Respuesta de reCAPTCHA:", data);
 
     if (!data.success) {
       return {
@@ -34,5 +35,5 @@ const verifyRecaptcha = async (token) => {
 };
 
 module.exports = {
-  verifyRecaptcha,
+  validarRecaptcha,
 };
