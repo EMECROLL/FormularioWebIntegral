@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import './App.css';
 
 interface FormData {
@@ -6,6 +7,7 @@ interface FormData {
   Correo: string;
   Telefono: string;
   Mensaje: string;
+  recaptcha: string;
 }
 
 interface FormErrors {
@@ -13,6 +15,7 @@ interface FormErrors {
   Correo?: string;
   Telefono?: string;
   Mensaje?: string;
+  recaptcha?: string;
 }
 
 function App() {
@@ -20,7 +23,8 @@ function App() {
     NombreCompleto: '',
     Correo: '',
     Telefono: '',
-    Mensaje: ''
+    Mensaje: '',
+    recaptcha: '',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -40,6 +44,7 @@ function App() {
       newErrors.Telefono = 'Teléfono debe tener 10 dígitos';
 
     if (!formData.Mensaje.trim()) newErrors.Mensaje = 'Mensaje requerido';
+    if (!formData.recaptcha) newErrors.recaptcha = 'Por favor verifica que no eres un robot.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -51,17 +56,26 @@ function App() {
     setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
+  const handleRecaptchaChange = (token: string | null) => {
+    setFormData(prev => ({ ...prev, recaptcha: token || '' }));
+    setErrors(prev => ({ ...prev, recaptcha: '' }));
+    
+  };
+
+
+
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
     setStatus('Enviando...');
-
+    
     try {
-      
-      const apiUrl = 'http://localhost:3000/api/usuarios';
-      
+      const apiUrl = import.meta.env.VITE_URLAPI;
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -69,6 +83,8 @@ function App() {
         },
         body: JSON.stringify(formData),
       });
+
+      
 
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
@@ -78,7 +94,7 @@ function App() {
       console.log('Respuesta del servidor:', data);
 
       setStatus('Mensaje enviado con éxito');
-      setFormData({ NombreCompleto: '', Correo: '', Telefono: '', Mensaje: '' });
+      setFormData({ NombreCompleto: '', Correo: '', Telefono: '', Mensaje: '', recaptcha: '' });
       setErrors({});
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
@@ -150,8 +166,20 @@ function App() {
               {errors.Mensaje && <span className="error-message">{errors.Mensaje}</span>}
             </div>
 
-            <button 
-              type="submit" 
+            <div className={`form-group ${errors.recaptcha ? 'error' : ''}`}>
+              {import.meta.env.VITE_RECAPTCHA_KEY ? (
+                <ReCAPTCHA
+                  sitekey={import.meta.env.VITE_RECAPTCHA_KEY}
+                  onChange={handleRecaptchaChange}
+                />
+              ) : (
+                <span className="error-message">No se pudo cargar reCAPTCHA</span>
+              )}
+              {errors.recaptcha && <span className="error-message">{errors.recaptcha}</span>}
+            </div>
+
+            <button
+              type="submit"
               className="submit-btn"
               disabled={isSubmitting}
             >
@@ -162,7 +190,7 @@ function App() {
                 </>
               ) : 'Enviar mensaje'}
             </button>
-            
+
             {status && (
               <div className={`status-message ${status.includes('éxito') ? 'success' : 'error'}`}>
                 {status}
