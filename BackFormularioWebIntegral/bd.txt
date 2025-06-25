@@ -1,0 +1,11 @@
+CREATE DATABASE FormularioWebIntegral;
+
+USE FormularioWebIntegral;
+
+CREATE TABLE Usuarios (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    NombreCompleto VARCHAR(100) NOT NULL,
+    Correo VARCHAR(100) NOT NULL,
+    Telefono VARCHAR(20),
+    Mensaje TEXT
+);
