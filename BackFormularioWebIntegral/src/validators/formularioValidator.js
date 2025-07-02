@@ -6,6 +6,7 @@ const formularioSchema = Joi.object({
   Telefono: Joi.number().integer().min(10).optional(),
   Mensaje: Joi.string().max(500).required(),
   recaptcha: Joi.string().required(),
+  aceptaPrivacidad: Joi.boolean().required().valid(true),
 });
 
 module.exports = {
