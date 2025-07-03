@@ -17,6 +17,8 @@ const helloRoutes = require('./routes/helloRoutes');
 app.use('/api', helloRoutes);
 const formularioRoutes = require('./routes/formularioRoutes');
 app.use('/api', formularioRoutes);
+const authRoutes = require('./routes/authRoutes');
+app.use('/api', authRoutes);
 
 //* Ruta Swagger
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
