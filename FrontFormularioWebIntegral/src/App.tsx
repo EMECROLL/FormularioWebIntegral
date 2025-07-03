@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { Link } from 'react-router-dom';  // Asegúrate de tenerlo importado
+import { Link } from 'react-router-dom';  
 import './App.css';
 
 interface FormData {
@@ -9,7 +9,7 @@ interface FormData {
   Telefono: string;
   Mensaje: string;
   recaptcha: string;
-  aceptaPrivacidad: boolean;
+  aceptarPrivacidad: boolean;
 }
 
 interface FormErrors {
@@ -18,22 +18,23 @@ interface FormErrors {
   Telefono?: string;
   Mensaje?: string;
   recaptcha?: string;
-  aceptaPrivacidad?: string;
+  aceptarPrivacidad?: boolean;
 }
 
 function App() {
-  const [formData, setFormData] = useState<FormData>({
-    NombreCompleto: '',
-    Correo: '',
-    Telefono: '',
-    Mensaje: '',
-    recaptcha: '',
-    aceptaPrivacidad: false,
-  });
 
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const [formData, setFormData] = useState<FormData>({
+  NombreCompleto: '',
+  Correo: '',
+  Telefono: '',
+  Mensaje: '',
+  recaptcha: '',
+  aceptarPrivacidad: false,
+});
+
+const [errors, setErrors] = useState<FormErrors>({});
+const [status, setStatus] = useState<string | null>(null);
+const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -49,7 +50,7 @@ function App() {
 
     if (!formData.Mensaje.trim()) newErrors.Mensaje = 'Mensaje requerido';
     if (!formData.recaptcha) newErrors.recaptcha = 'Por favor verifica que no eres un robot.';
-    if (!formData.aceptaPrivacidad) newErrors.aceptaPrivacidad = 'Debes aceptar el aviso de privacidad para continuar.';
+    if (!formData.aceptarPrivacidad) newErrors.aceptarPrivacidad = 'Debes aceptar el aviso de privacidad para continuar.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,8 +64,8 @@ function App() {
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = e.target;
-    setFormData(prev => ({ ...prev, aceptaPrivacidad: checked }));
-    setErrors(prev => ({ ...prev, aceptaPrivacidad: '' }));
+    setFormData(prev => ({ ...prev, aceptarPrivacidad: checked }));
+    setErrors(prev => ({ ...prev, aceptarPrivacidad: '' }));
   };
 
   const handleRecaptchaChange = (token: string | null) => {
@@ -98,7 +99,7 @@ function App() {
       console.log('Respuesta del servidor:', data);
 
       setStatus('Mensaje enviado con éxito');
-      setFormData({ NombreCompleto: '', Correo: '', Telefono: '', Mensaje: '', recaptcha: '', aceptaPrivacidad: false });
+      setFormData({ NombreCompleto: '', Correo: '', Telefono: '', Mensaje: '', recaptcha: '', aceptarPrivacidad: false });
       setErrors({});
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
@@ -185,7 +186,7 @@ function App() {
                       <input
                         type="checkbox"
                         name="aceptaPrivacidad"
-                        checked={formData.aceptaPrivacidad}
+                        checked={formData.aceptarPrivacidad}
                         onChange={handleCheckboxChange}
                       />
                     </div>
@@ -205,19 +206,14 @@ function App() {
                         </span>
                       </label>
 
-                      {errors.aceptaPrivacidad && (
+                      {errors.aceptarPrivacidad && (
                         <div className="error-message" style={{ marginTop: '4px' }}>
-                          {errors.aceptaPrivacidad}
+                          {errors.aceptarPrivacidad}
                         </div>
                       )}
                     </div>
 
                   </div>
-
-
-
-
-
 
                 </>
               ) : (
