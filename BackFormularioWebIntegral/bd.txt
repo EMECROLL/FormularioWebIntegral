@@ -9,3 +9,10 @@ CREATE TABLE Usuarios (
     Telefono VARCHAR(20),
     Mensaje TEXT
 );
+
+CREATE TABLE Administradores (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Correo VARCHAR(100) NOT NULL UNIQUE,
+    Contrasenia VARCHAR(255) NOT NULL,
+    FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
