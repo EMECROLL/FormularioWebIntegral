@@ -1,6 +1,6 @@
 import emailjs from '@emailjs/browser';
 
-const sendEmail = (data) => {
+const sendEmail = (data: any) => {
 
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;

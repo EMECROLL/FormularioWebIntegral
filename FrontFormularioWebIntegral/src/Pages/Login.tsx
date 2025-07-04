@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../Store/authStore";
 
 const Login: React.FC = () => {
@@ -7,7 +6,6 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
     const { login } = useAuthStore();
 
     const handleSubmit = async (e: React.FormEvent) => {
