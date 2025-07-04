@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../Store/authStore";
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -7,6 +8,7 @@ const Login: React.FC = () => {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuthStore();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,9 +38,8 @@ const Login: React.FC = () => {
             if (!response.ok) {
                 throw new Error(data.error || "Error al iniciar sesión");
             }
-
-            localStorage.setItem("token", data.token);
-            navigate("/dashboard");
+            //* Login del authStore
+            login(data.token);
         } catch (err: any) {
             setError(err.message);
         } finally {

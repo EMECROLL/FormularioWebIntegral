@@ -1,6 +1,9 @@
 import React from "react";
+import { useAuthStore } from "../Store/authStore";
 
 const Home = () => {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-[#f8f4e9] to-[#f0ebe0] text-[#3a3226] font-serif">
       {/* Header */}
@@ -14,10 +17,10 @@ const Home = () => {
             Ir al Formulario
           </button>
           <button
-            onClick={() => (window.location.href = "/Login")}
+            onClick={() => (window.location.href = isAuthenticated ? "/Dashboard" : "/Login")}
             className="px-6 py-2 rounded-sm bg-[#d4af37] text-[#2a2e35] hover:bg-[#c19b2e] transition-all duration-300 font-medium tracking-wide"
           >
-            Iniciar Sesión
+            {isAuthenticated ? "Ir al Dashboard" : "Iniciar Sesión"}
           </button>
         </div>
       </header>

@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import Formulario from './Components/Formulario';
 import Login from './Pages/Login';
 import Dashboard from './Pages/Dashboard';
+import PrivateRoute from './PrivateRoute';
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
       <Route path="/Terminos" element={<Terminos />} />
       <Route path="/Formulario" element={<Formulario />} />
       <Route path="/Login" element={<Login />} />
-      <Route path="/Dashboard" element={<Dashboard />} />
+      <Route path="/Dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
     </Routes>
   );
 }

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Link } from 'react-router-dom';
+import emailService from '../Services/emailService';
+import whatsappService from '../Services/whatsappService';
 
 interface FormData {
   NombreCompleto: string;
@@ -79,6 +81,10 @@ function Formulario() {
     setStatus('Enviando...');
 
     try {
+
+      await emailService.sendEmail(formData);
+      // await whatsappService.sendMessage({ NombreCompleto: formData.NombreCompleto, Telefono: formData.Telefono});
+
       const apiUrl = import.meta.env.VITE_URLAPI;
 
       const response = await fetch(apiUrl, {
