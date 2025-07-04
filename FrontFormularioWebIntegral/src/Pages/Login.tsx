@@ -22,7 +22,7 @@ const Login: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_URLAPI}api/auth/login`, {
+            const response = await fetch(`${import.meta.env.VITE_URLAPI}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -135,15 +135,6 @@ const Login: React.FC = () => {
                         'Ingresar'
                     )}
                 </button>
-
-                <div className="mt-6 text-center">
-                    <p className="text-xs text-[#5a5248] font-light">
-                        ¿Problemas para acceder?{' '}
-                        <a href="/contacto" className="text-[#d4af37] hover:underline transition">
-                            Contacta al administrador
-                        </a>
-                    </p>
-                </div>
             </form>
         </div>
     );

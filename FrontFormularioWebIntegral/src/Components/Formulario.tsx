@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import emailService from "../Services/emailService";
 import whatsappService from "../Services/whatsappService";
 
@@ -34,6 +34,7 @@ function Formulario() {
   const [status, setStatus] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [aceptarPrivacidad, setAceptarPrivacidad] = useState(false);
+  const navigate = useNavigate();
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -88,7 +89,7 @@ function Formulario() {
     try {
       const apiUrl = import.meta.env.VITE_URLAPI;
 
-      const response = await fetch(`${apiUrl}/usuarios`, {
+      const response = await fetch(`${apiUrl}/api/usuarios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,8 +127,19 @@ function Formulario() {
 
   return (
     <div className="min-h-screen flex justify-center items-center p-8 bg-gradient-to-br from-[#f8f4e9] to-[#f0ebe0] font-serif">
-      <div className="max-w-2xl w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-sm overflow-hidden border border-[#e8e6e1]">
-        {/* Encabezado del formulario */}
+      <div className="max-w-2xl w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-sm overflow-hidden border border-[#e8e6e1] relative">
+
+        <button
+          onClick={() => navigate('/')}
+          className="absolute top-4 left-4 text-[#d4af37] hover:text-[#c19b2e] transition-colors"
+          aria-label="Volver al inicio"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </button>
+
+        
         <div className="p-8 bg-[#2a2e35] text-[#e8e6e1] text-center border-b border-[#3a3f47]">
           <h1 className="text-2xl font-light tracking-wider text-[#d4af37] mb-2">
             Contáctanos
@@ -137,13 +149,12 @@ function Formulario() {
           </p>
         </div>
 
-        {/* Cuerpo del formulario */}
+        
         <form onSubmit={handleSubmit} noValidate className="p-8 flex flex-col">
-          {/* Nombre Completo */}
+          
           <div
-            className={`mb-6 ${
-              errors.NombreCompleto ? "border-l-4 border-[#d4af37] pl-4" : ""
-            }`}
+            className={`mb-6 ${errors.NombreCompleto ? "border-l-4 border-[#d4af37] pl-4" : ""
+              }`}
           >
             <label
               htmlFor="NombreCompleto"
@@ -168,11 +179,10 @@ function Formulario() {
             )}
           </div>
 
-          {/* Correo */}
+          
           <div
-            className={`mb-6 ${
-              errors.Correo ? "border-l-4 border-[#d4af37] pl-4" : ""
-            }`}
+            className={`mb-6 ${errors.Correo ? "border-l-4 border-[#d4af37] pl-4" : ""
+              }`}
           >
             <label
               htmlFor="Correo"
@@ -197,11 +207,10 @@ function Formulario() {
             )}
           </div>
 
-          {/* Teléfono */}
+
           <div
-            className={`mb-6 ${
-              errors.Telefono ? "border-l-4 border-[#d4af37] pl-4" : ""
-            }`}
+            className={`mb-6 ${errors.Telefono ? "border-l-4 border-[#d4af37] pl-4" : ""
+              }`}
           >
             <label
               htmlFor="Telefono"
@@ -226,11 +235,10 @@ function Formulario() {
             )}
           </div>
 
-          {/* Mensaje */}
+          
           <div
-            className={`mb-6 ${
-              errors.Mensaje ? "border-l-4 border-[#d4af37] pl-4" : ""
-            }`}
+            className={`mb-6 ${errors.Mensaje ? "border-l-4 border-[#d4af37] pl-4" : ""
+              }`}
           >
             <label
               htmlFor="Mensaje"
@@ -255,13 +263,12 @@ function Formulario() {
             )}
           </div>
 
-          {/* Recaptcha y checkbox */}
+          
           <div
-            className={`mb-6 ${
-              errors.recaptcha || errors.aceptarPrivacidad
-                ? "border-l-4 border-[#d4af37] pl-4"
-                : ""
-            }`}
+            className={`mb-6 ${errors.recaptcha || errors.aceptarPrivacidad
+              ? "border-l-4 border-[#d4af37] pl-4 "
+              : ""
+              }`}
           >
             {import.meta.env.VITE_RECAPTCHA_KEY ? (
               <>
@@ -275,14 +282,14 @@ function Formulario() {
                   </span>
                 )}
 
-                <div className="flex items-start mt-4">
+                <div className="flex items-start mt-4 justify-center">
                   <input
                     type="checkbox"
                     name="aceptarPrivacidad"
                     id="aceptarPrivacidad"
                     checked={aceptarPrivacidad}
                     onChange={handleCheckboxChange}
-                    className="mt-1 mr-3 h-4 w-4 rounded-sm border-[#3a3226] text-[#d4af37] focus:ring-[#d4af37]"
+                    className="mt-0 mr-3 h-4 w-4 rounded-sm border-[#3a3226] text-[#d4af37] focus:ring-[#d4af37]"
                   />
                   <label
                     htmlFor="aceptarPrivacidad"
@@ -318,7 +325,7 @@ function Formulario() {
             )}
           </div>
 
-          {/* Botón de envío */}
+          
           <button
             type="submit"
             disabled={isSubmitting}
@@ -351,14 +358,13 @@ function Formulario() {
             {isSubmitting ? "Enviando..." : "Enviar mensaje"}
           </button>
 
-          {/* Mensaje de estado */}
+          
           {status && (
             <div
               className={`mt-6 p-3 rounded-sm text-center font-light tracking-wide text-sm
-                ${
-                  status.includes("éxito")
-                    ? "bg-[#f0ebe0] text-[#3a3226] border border-[#d4af37]"
-                    : "bg-[#f0ebe0] text-[#d4af37] border border-[#d4af37]"
+                ${status.includes("éxito")
+                  ? "bg-[#f0ebe0] text-[#3a3226] border border-[#d4af37]"
+                  : "bg-[#f0ebe0] text-[#d4af37] border border-[#d4af37]"
                 }`}
               role="alert"
             >
