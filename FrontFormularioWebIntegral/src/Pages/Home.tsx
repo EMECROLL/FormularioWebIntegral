@@ -116,11 +116,11 @@ const Home = () => {
               </blockquote>
               <div className="flex justify-center items-center">
                 <div className="h-12 w-12 rounded-full bg-[#d4af37] flex items-center justify-center text-[#2a2e35] font-medium mr-4">
-                  AM
+                  ED
                 </div>
                 <div className="text-left">
-                  <p className="font-medium">Ana Martínez</p>
-                  <p className="text-sm text-[#a8a6a1]">Directora de Operaciones</p>
+                  <p className="font-medium">Efrain Diaz</p>
+                  <p className="text-sm text-[#a8a6a1]">Director de Operaciones</p>
                 </div>
               </div>
             </div>

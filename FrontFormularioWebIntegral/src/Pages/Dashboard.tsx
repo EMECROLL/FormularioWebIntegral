@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../Store/authStore";
 import { useNavigate } from "react-router-dom";
 
@@ -25,6 +25,13 @@ function Dashboard() {
         logout();
         navigate("/login");
     };
+
+    const obtenerValorEstatus = (texto: string): number => {
+    const entry = Object.entries(statusLabels).find(
+        ([_, label]) => label.toLowerCase() === texto.toLowerCase()
+    );
+    return entry ? parseInt(entry[0]) : StatusEnum.NUEVO; // Default si no encuentra
+};
 
     const fetchUsuarios = async () => {
         try {
@@ -154,7 +161,7 @@ function Dashboard() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                         <select
-                                            value={usuario.Estatus}
+                                            value={obtenerValorEstatus(usuario.Estatus)}
                                             onChange={(e) =>
                                                 actualizarEstatus(usuario.Id, parseInt(e.target.value))
                                             }

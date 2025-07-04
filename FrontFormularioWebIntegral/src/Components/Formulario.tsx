@@ -2,7 +2,8 @@ import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Link, useNavigate } from "react-router-dom";
 import emailService from "../Services/emailService";
-import whatsappService from "../Services/whatsappService";
+// import whatsappService from "../Services/whatsappService";
+import telegramService from "../Services/telegramService";
 
 interface FormData {
   NombreCompleto: string;
@@ -107,6 +108,7 @@ function Formulario() {
       setStatus("Mensaje enviado con éxito");
       await emailService.sendEmail(formData);
       // await whatsappService.sendMessage({ NombreCompleto: formData.NombreCompleto, Telefono: formData.Telefono});
+      await telegramService.sendTelegramMessage(formData);
 
       setFormData({
         NombreCompleto: "",
