@@ -1,5 +1,4 @@
-const { getUsuarios } = require("../repositories/formularioRepository");
-const { insertarUsuario } = require("../repositories/formularioRepository");
+const { getUsuarios, insertarUsuario, actualizarStatusUsuario } = require("../repositories/formularioRepository");
 const { validarRecaptcha } = require("../services/recaptchaService");
 const { formularioSchema } = require("../validators/formularioValidator");
 
@@ -28,10 +27,25 @@ const crearUsuario = async (usuarioData) => {
         throw new Error("Error al validar reCAPTCHA: " + error.message);
       });
   }
-  return await insertarUsuario(usuarioData);
+  // return await insertarUsuario(usuarioData);
+};
+
+updateStatusUsuario = async (id, nuevoEstatus) => {
+  try {
+    await actualizarStatusUsuario(id, nuevoEstatus).then((resultado) => {
+      if (resultado.status === "success") {
+        console.log("Usuario actualizado correctamente:", resultado.message);
+        return resultado;
+      }
+    });
+  } catch (error) {
+    console.error("Error al actualizar el estado del usuario:", error);
+    throw new Error("Error al actualizar el estado del usuario: " + error.message);
+  }
 };
 
 module.exports = {
   obtenerUsuarios,
   crearUsuario,
+  updateStatusUsuario,
 };

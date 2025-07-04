@@ -4,6 +4,13 @@ const usuarioController = require("../controllers/formularioController");
 
 /**
  * @swagger
+ * tags:
+ *   name: Usuarios
+ *   description: Operaciones relacionadas con usuarios del formulario
+ */
+
+/**
+ * @swagger
  * /usuarios:
  *   get:
  *     summary: Obtiene todos los usuarios
@@ -28,7 +35,6 @@ const usuarioController = require("../controllers/formularioController");
  *                     type: string
  *                   Mensaje:
  *                     type: string
- *
  *   post:
  *     summary: Crea un nuevo usuario
  *     tags: [Usuarios]
@@ -50,7 +56,7 @@ const usuarioController = require("../controllers/formularioController");
  *                 example: juan.perez@example.com
  *               Telefono:
  *                 type: string
- *                 example: 555-123-4567
+ *                 example: 5551234567
  *               Mensaje:
  *                 type: string
  *                 example: Mensaje de prueba
@@ -68,7 +74,41 @@ const usuarioController = require("../controllers/formularioController");
  *                 id:
  *                   type: integer
  */
+
+/**
+ * @swagger
+ * /usuarios/{id}:
+ *   put:
+ *     summary: Actualiza el estatus de un usuario
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nuevoEstatus
+ *             properties:
+ *               nuevoEstatus:
+ *                 type: int
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Estatus actualizado correctamente
+ *       500:
+ *         description: Error del servidor
+ */
+
 router.get("/usuarios", usuarioController.getUsuarios);
 router.post("/usuarios", usuarioController.postUsuario);
+router.put("/usuarios/:id", usuarioController.putStatusUsuario);
 
 module.exports = router;

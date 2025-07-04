@@ -23,7 +23,21 @@ const postUsuario = async (req, res) => {
   }
 };
 
+const putStatusUsuario = async (req, res) => {
+  const { id } = req.params;
+  const { nuevoEstatus } = req.body;
+
+  try {
+    const resultado = await updateStatusUsuario(id, nuevoEstatus);
+    res.json(resultado);
+  } catch (error) {
+    console.error('Error en putUsuario:', error);
+    res.status(500).json({ error: 'Error al actualizar el usuario' });
+  }
+};
+
 module.exports = {
   getUsuarios,
   postUsuario,
+  putStatusUsuario
 };

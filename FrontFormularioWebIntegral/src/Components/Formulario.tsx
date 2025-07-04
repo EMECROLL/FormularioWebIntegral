@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { Link } from 'react-router-dom';
-import emailService from '../Services/emailService';
-import whatsappService from '../Services/whatsappService';
+import { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { Link } from "react-router-dom";
+import emailService from "../Services/emailService";
+import whatsappService from "../Services/whatsappService";
 
 interface FormData {
   NombreCompleto: string;
@@ -10,7 +10,6 @@ interface FormData {
   Telefono: string;
   Mensaje: string;
   recaptcha: string;
-  aceptarPrivacidad: boolean;
 }
 
 interface FormErrors {
@@ -24,53 +23,59 @@ interface FormErrors {
 
 function Formulario() {
   const [formData, setFormData] = useState<FormData>({
-    NombreCompleto: '',
-    Correo: '',
-    Telefono: '',
-    Mensaje: '',
-    recaptcha: '',
-    aceptarPrivacidad: false,
+    NombreCompleto: "",
+    Correo: "",
+    Telefono: "",
+    Mensaje: "",
+    recaptcha: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [aceptarPrivacidad, setAceptarPrivacidad] = useState(false);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formData.NombreCompleto.trim()) newErrors.NombreCompleto = 'Nombre requerido';
-    if (!formData.Correo.trim()) newErrors.Correo = 'Correo requerido';
+    if (!formData.NombreCompleto.trim())
+      newErrors.NombreCompleto = "Nombre requerido";
+    if (!formData.Correo.trim()) newErrors.Correo = "Correo requerido";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Correo))
-      newErrors.Correo = 'Correo inválido';
+      newErrors.Correo = "Correo inválido";
 
-    if (!formData.Telefono.trim()) newErrors.Telefono = 'Teléfono requerido';
+    if (!formData.Telefono.trim()) newErrors.Telefono = "Teléfono requerido";
     else if (!/^\d{10}$/.test(formData.Telefono))
-      newErrors.Telefono = 'Teléfono debe tener 10 dígitos';
+      newErrors.Telefono = "Teléfono debe tener 10 dígitos";
 
-    if (!formData.Mensaje.trim()) newErrors.Mensaje = 'Mensaje requerido';
-    if (!formData.recaptcha) newErrors.recaptcha = 'Por favor verifica que no eres un robot.';
-    if (!formData.aceptarPrivacidad) newErrors.aceptarPrivacidad = 'Debes aceptar el aviso de privacidad para continuar.';
+    if (!formData.Mensaje.trim()) newErrors.Mensaje = "Mensaje requerido";
+    if (!formData.recaptcha)
+      newErrors.recaptcha = "Por favor verifica que no eres un robot.";
+    if (!aceptarPrivacidad)
+      newErrors.aceptarPrivacidad =
+        "Debes aceptar el aviso de privacidad para continuar.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: '' }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = e.target;
-    setFormData(prev => ({ ...prev, aceptarPrivacidad: checked }));
-    setErrors(prev => ({ ...prev, aceptarPrivacidad: '' }));
+    setAceptarPrivacidad(checked);
+    setErrors((prev) => ({ ...prev, aceptarPrivacidad: "" }));
   };
 
   const handleRecaptchaChange = (token: string | null) => {
-    setFormData(prev => ({ ...prev, recaptcha: token || '' }));
-    setErrors(prev => ({ ...prev, recaptcha: '' }));
+    setFormData((prev) => ({ ...prev, recaptcha: token || "" }));
+    setErrors((prev) => ({ ...prev, recaptcha: "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,19 +83,15 @@ function Formulario() {
     if (!validate()) return;
 
     setIsSubmitting(true);
-    setStatus('Enviando...');
+    setStatus("Enviando...");
 
     try {
-
-      await emailService.sendEmail(formData);
-      // await whatsappService.sendMessage({ NombreCompleto: formData.NombreCompleto, Telefono: formData.Telefono});
-
       const apiUrl = import.meta.env.VITE_URLAPI;
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
+      const response = await fetch(`${apiUrl}/usuarios`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -100,21 +101,24 @@ function Formulario() {
       }
 
       const data = await response.json();
-      console.log('Respuesta del servidor:', data);
+      console.log("Respuesta del servidor:", data);
 
-      setStatus('Mensaje enviado con éxito');
+      setStatus("Mensaje enviado con éxito");
+      await emailService.sendEmail(formData);
+      // await whatsappService.sendMessage({ NombreCompleto: formData.NombreCompleto, Telefono: formData.Telefono});
+
       setFormData({
-        NombreCompleto: '',
-        Correo: '',
-        Telefono: '',
-        Mensaje: '',
-        recaptcha: '',
-        aceptarPrivacidad: false,
+        NombreCompleto: "",
+        Correo: "",
+        Telefono: "",
+        Mensaje: "",
+        recaptcha: "",
       });
+      setAceptarPrivacidad(false);
       setErrors({});
     } catch (error) {
-      console.error('Error al enviar el formulario:', error);
-      setStatus('Error al enviar el mensaje. Por favor intenta nuevamente.');
+      console.error("Error al enviar el formulario:", error);
+      setStatus("Error al enviar el mensaje. Por favor intenta nuevamente.");
     } finally {
       setIsSubmitting(false);
     }
@@ -125,14 +129,22 @@ function Formulario() {
       <div className="max-w-2xl w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-sm overflow-hidden border border-[#e8e6e1]">
         {/* Encabezado del formulario */}
         <div className="p-8 bg-[#2a2e35] text-[#e8e6e1] text-center border-b border-[#3a3f47]">
-          <h1 className="text-2xl font-light tracking-wider text-[#d4af37] mb-2">Contáctanos</h1>
-          <p className="text-sm text-[#a8a6a1]">Llena el formulario y nos pondremos en contacto contigo</p>
+          <h1 className="text-2xl font-light tracking-wider text-[#d4af37] mb-2">
+            Contáctanos
+          </h1>
+          <p className="text-sm text-[#a8a6a1]">
+            Llena el formulario y nos pondremos en contacto contigo
+          </p>
         </div>
 
         {/* Cuerpo del formulario */}
         <form onSubmit={handleSubmit} noValidate className="p-8 flex flex-col">
           {/* Nombre Completo */}
-          <div className={`mb-6 ${errors.NombreCompleto ? 'border-l-4 border-[#d4af37] pl-4' : ''}`}>
+          <div
+            className={`mb-6 ${
+              errors.NombreCompleto ? "border-l-4 border-[#d4af37] pl-4" : ""
+            }`}
+          >
             <label
               htmlFor="NombreCompleto"
               className="block mb-2 font-light text-[#3a3226] tracking-wide"
@@ -150,12 +162,18 @@ function Formulario() {
                 focus:outline-none focus:ring-1 focus:ring-[#d4af37] focus:bg-white transition font-light`}
             />
             {errors.NombreCompleto && (
-              <span className="text-[#d4af37] text-xs mt-1 block font-light">{errors.NombreCompleto}</span>
+              <span className="text-[#d4af37] text-xs mt-1 block font-light">
+                {errors.NombreCompleto}
+              </span>
             )}
           </div>
 
           {/* Correo */}
-          <div className={`mb-6 ${errors.Correo ? 'border-l-4 border-[#d4af37] pl-4' : ''}`}>
+          <div
+            className={`mb-6 ${
+              errors.Correo ? "border-l-4 border-[#d4af37] pl-4" : ""
+            }`}
+          >
             <label
               htmlFor="Correo"
               className="block mb-2 font-light text-[#3a3226] tracking-wide"
@@ -173,12 +191,18 @@ function Formulario() {
                 focus:outline-none focus:ring-1 focus:ring-[#d4af37] focus:bg-white transition font-light`}
             />
             {errors.Correo && (
-              <span className="text-[#d4af37] text-xs mt-1 block font-light">{errors.Correo}</span>
+              <span className="text-[#d4af37] text-xs mt-1 block font-light">
+                {errors.Correo}
+              </span>
             )}
           </div>
 
           {/* Teléfono */}
-          <div className={`mb-6 ${errors.Telefono ? 'border-l-4 border-[#d4af37] pl-4' : ''}`}>
+          <div
+            className={`mb-6 ${
+              errors.Telefono ? "border-l-4 border-[#d4af37] pl-4" : ""
+            }`}
+          >
             <label
               htmlFor="Telefono"
               className="block mb-2 font-light text-[#3a3226] tracking-wide"
@@ -196,12 +220,18 @@ function Formulario() {
                 focus:outline-none focus:ring-1 focus:ring-[#d4af37] focus:bg-white transition font-light`}
             />
             {errors.Telefono && (
-              <span className="text-[#d4af37] text-xs mt-1 block font-light">{errors.Telefono}</span>
+              <span className="text-[#d4af37] text-xs mt-1 block font-light">
+                {errors.Telefono}
+              </span>
             )}
           </div>
 
           {/* Mensaje */}
-          <div className={`mb-6 ${errors.Mensaje ? 'border-l-4 border-[#d4af37] pl-4' : ''}`}>
+          <div
+            className={`mb-6 ${
+              errors.Mensaje ? "border-l-4 border-[#d4af37] pl-4" : ""
+            }`}
+          >
             <label
               htmlFor="Mensaje"
               className="block mb-2 font-light text-[#3a3226] tracking-wide"
@@ -219,12 +249,20 @@ function Formulario() {
                 focus:outline-none focus:ring-1 focus:ring-[#d4af37] focus:bg-white transition font-light`}
             />
             {errors.Mensaje && (
-              <span className="text-[#d4af37] text-xs mt-1 block font-light">{errors.Mensaje}</span>
+              <span className="text-[#d4af37] text-xs mt-1 block font-light">
+                {errors.Mensaje}
+              </span>
             )}
           </div>
 
           {/* Recaptcha y checkbox */}
-          <div className={`mb-6 ${errors.recaptcha || errors.aceptarPrivacidad ? 'border-l-4 border-[#d4af37] pl-4' : ''}`}>
+          <div
+            className={`mb-6 ${
+              errors.recaptcha || errors.aceptarPrivacidad
+                ? "border-l-4 border-[#d4af37] pl-4"
+                : ""
+            }`}
+          >
             {import.meta.env.VITE_RECAPTCHA_KEY ? (
               <>
                 <ReCAPTCHA
@@ -232,7 +270,9 @@ function Formulario() {
                   onChange={handleRecaptchaChange}
                 />
                 {errors.recaptcha && (
-                  <span className="text-[#d4af37] text-xs mt-1 block font-light">{errors.recaptcha}</span>
+                  <span className="text-[#d4af37] text-xs mt-1 block font-light">
+                    {errors.recaptcha}
+                  </span>
                 )}
 
                 <div className="flex items-start mt-4">
@@ -240,19 +280,22 @@ function Formulario() {
                     type="checkbox"
                     name="aceptarPrivacidad"
                     id="aceptarPrivacidad"
-                    checked={formData.aceptarPrivacidad}
+                    checked={aceptarPrivacidad}
                     onChange={handleCheckboxChange}
                     className="mt-1 mr-3 h-4 w-4 rounded-sm border-[#3a3226] text-[#d4af37] focus:ring-[#d4af37]"
                   />
-                  <label htmlFor="aceptarPrivacidad" className="text-[#3a3226] text-xs select-none font-light">
-                    Acepto el{' '}
+                  <label
+                    htmlFor="aceptarPrivacidad"
+                    className="text-[#3a3226] text-xs select-none font-light"
+                  >
+                    Acepto el{" "}
                     <Link
                       to="/AvisoDePrivacidad"
                       className="text-[#d4af37] underline hover:text-[#c19b2e] transition"
                     >
                       Aviso de Privacidad
-                    </Link>{' '}
-                    y{' '}
+                    </Link>{" "}
+                    y{" "}
                     <Link
                       to="/Terminos"
                       className="text-[#d4af37] underline hover:text-[#c19b2e] transition"
@@ -263,11 +306,15 @@ function Formulario() {
                 </div>
 
                 {errors.aceptarPrivacidad && (
-                  <span className="text-[#d4af37] text-xs mt-1 block font-light">{errors.aceptarPrivacidad}</span>
+                  <span className="text-[#d4af37] text-xs mt-1 block font-light">
+                    {errors.aceptarPrivacidad}
+                  </span>
                 )}
               </>
             ) : (
-              <span className="text-[#d4af37] text-xs">No se pudo cargar reCAPTCHA</span>
+              <span className="text-[#d4af37] text-xs">
+                No se pudo cargar reCAPTCHA
+              </span>
             )}
           </div>
 
@@ -301,7 +348,7 @@ function Formulario() {
                 ></path>
               </svg>
             )}
-            {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
+            {isSubmitting ? "Enviando..." : "Enviar mensaje"}
           </button>
 
           {/* Mensaje de estado */}
@@ -309,9 +356,9 @@ function Formulario() {
             <div
               className={`mt-6 p-3 rounded-sm text-center font-light tracking-wide text-sm
                 ${
-                  status.includes('éxito')
-                    ? 'bg-[#f0ebe0] text-[#3a3226] border border-[#d4af37]'
-                    : 'bg-[#f0ebe0] text-[#d4af37] border border-[#d4af37]'
+                  status.includes("éxito")
+                    ? "bg-[#f0ebe0] text-[#3a3226] border border-[#d4af37]"
+                    : "bg-[#f0ebe0] text-[#d4af37] border border-[#d4af37]"
                 }`}
               role="alert"
             >
